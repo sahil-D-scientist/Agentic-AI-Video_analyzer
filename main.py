@@ -7,8 +7,8 @@ from urllib.parse import urlparse, parse_qs
 app = Flask(__name__)
 
 # Set up API keys
-os.environ['GEMINI_API_KEY'] = "AIzaSyDSeRLOVOq_qTIVM0v6XSwBKEdYNkzZ7Og"
-os.environ['GOOGLE_API_KEY'] = "AIzaSyCHegRg4QyqaImUR_U8ftJTdMomzxA7Fnc"
+os.environ['GEMINI_API_KEY'] = ""
+os.environ['GOOGLE_API_KEY'] = ""
 llm = LLM(model="gemini/gemini-1.5-flash", provider="gemini")
 
 def get_youtube_video_info(url: str) -> str:

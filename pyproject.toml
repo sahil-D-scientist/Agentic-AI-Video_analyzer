@@ -1,0 +1,12 @@
+[project]
+name = "my-awesome-project"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "crewai[tools]>=0.114.0",
+    "flask>=3.1.0",
+    "google-generativeai>=0.8.5",
+    "youtube-transcript-api>=1.0.3",
+]

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>YouTube Video Preview</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      border-right: .15em solid orange;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 0;
+      animation: typing 3s steps(30, end) forwards, blink .75s step-end ;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 47% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    input[type="text"] {
+      width: 100%;
+      max-width: 600px;
+      padding: 12px 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      max-width: 600px;
+      height: 340px;
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .link-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .link-output {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #0056b3;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #analysisOutput {
+      width: 100%;
+      max-width: 600px;
+      background: #fff;
+      color: #111;
+      border-left: 4px solid #007bff;
+      padding: 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    /* Responsive Tweaks */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      input, iframe, #analysisOutput {
+        font-size: 0.95rem;
+      }
+    }
+
+    b {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">
+    Video Analysis using Agentic AI</h1>
+
+  <input type="text" id="youtubeUrl" placeholder="Paste your YouTube video URL here" oninput="updateVideo()">
+
+  <iframe id="videoFrame" src="" aria-multiline=""></iframe>
+
+  <div class="link-box">
+    <div class="link-output" id="linkDisplay">Your link will appear here...</div>
+    <button onclick="copyLink()">Copy Link</button>
+  </div>
+
+  <button onclick="analyze()">Analyze Video</button>
+
+  <div id="analysisOutput">Your analysis will appear here...</div>
+
+  <script>
+    function updateVideo() {
+      const input = document.getElementById('youtubeUrl').value;
+      const videoId = extractVideoId(input);
+      const iframe = document.getElementById('videoFrame');
+      const display = document.getElementById('linkDisplay');
+
+      if (videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}`;
+        display.textContent = `https://www.youtube.com/watch?v=${videoId}`;
+      } else {
+        iframe.src = '';
+        display.textContent = 'Your link will appear here...';
+      }
+    }
+
+    function extractVideoId(url) {
+      const regex = /(?:v=|\/)([0-9A-Za-z_-]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : null;
+    }
+
+    function copyLink() {
+      const text = document.getElementById('linkDisplay').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Link copied!");
+      });
+    }
+
+    function formatBold(text) {
+      return text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+    }
+
+    function analyze() {
+      const url = document.getElementById('youtubeUrl').value;
+      const output = document.getElementById('analysisOutput');
+      output.innerHTML = "Analyzing...";
+
+      fetch('/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: url })
+      })
+      .then(response => response.json())
+      .then(data => {
+        output.innerHTML = formatBold(data.result);
+      })
+      .catch(error => {
+        output.innerHTML = 'Error: ' + error;
+      });
+    }
+  </script>
+</body>
+</html>
